@@ -1,0 +1,26 @@
+{
+  "_embedded": {
+    "pairing": [
+      {
+        "pilot": "aduarte@thoughtworks.com",
+        "navigator": "nbenigno@thoughtworks.com",
+        "pairings": 3
+      },
+      {
+        "pilot": "nbenigno@thoughtworks.com",
+        "navigator": "mfeitosa@thoughtworks.com",
+        "pairings": 2
+      },
+      {
+        "pilot": "aduarte@thoughtworks.com",
+        "navigator": "mfeitosa@thoughtworks.com",
+        "pairings": 3
+      },
+      {
+        "pilot": "dbarreto@thoughtworks.com",
+        "navigator": "mfeitosa@thoughtworks.com",
+        "pairings": 1
+      }
+    ]
+  }
+}

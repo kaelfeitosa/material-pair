@@ -1,0 +1,58 @@
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html">
+
+<script src="../../scripts/lib/md5.js"></script>
+
+<dom-module id="gravatar-image">
+  <style>
+    :host {
+      width: inherit;
+      height: inherit;
+      border-radius: inherit;
+    }
+
+    iron-image {
+      width: inherit;
+      height: inherit;
+      border-radius: inherit;
+    }
+  </style>
+
+  <template>
+    <iron-ajax method="HEAD" auto url="{{url}}" on-response="handleAvatarResponse" on-error="handleAvatarError"></iron-ajax>
+
+    <iron-image hidden$="{{!hasAvatar}}" loaded="{{loaded}}" fade="true" preload="true" sizing="contain" src="{{src}}"></iron-image>
+    <span hidden$="{{hasAvatar}}">
+      <content></content>
+    </span>
+  </template>
+
+  <script>
+    (function () {
+      Polymer({
+        is: 'gravatar-image',
+        properties: {
+          email: {
+            type: String,
+            observer: '_emailChanged'
+          },
+          hasAvatar: {
+            type: Boolean,
+            value: false,
+          }
+        },
+        _emailChanged(email) {
+          this.src = ''
+          this.url = `http://www.gravatar.com/avatar/${MD5(email)}?d=404`
+        },
+        handleAvatarResponse() {
+          this.hasAvatar = true;
+          this.src = this.url
+        },
+        handleAvatarError() {
+          this.hasAvatar = false;
+        }
+      });
+    })();
+  </script>
+</dom-module>

@@ -1,0 +1,70 @@
+<link rel="import" href="../../bower_components/paper-tooltip/paper-tooltip.html">
+
+<script src="../../scripts/lib/material-colors.js"></script>
+
+<dom-module id="committer-image">
+  <style>
+    :host {
+      display: inline-block;
+    }
+
+    .committer-round {
+      border-radius: 50%;
+      width: 48px;
+      height: 48px;
+      min-width: 48px;
+      margin: 0;
+      cursor: inherit;
+    }
+
+    .committer-round::shadow .content {
+      width: inherit !important;
+      height: inherit !important;
+      padding: 0;
+    }
+
+    .committer-round::shadow {
+      @apply(--shadow-elevation-2dp);
+    }
+
+    .committer-label {
+      color: white;
+      font-family: "Roboto";
+      font-weight: 100;
+      font-style: normal;
+    }
+  </style>
+
+  <template>
+    <div id="committer-round" class="committer-round horizontal center-center layout" style$="{{backgroundColor(committer)}}">
+      <gravatar-image id="gravatar-image" class="horizontal center-center layout" email="{{committer.email}}">
+        <div class="committer-label paper-font-headline">{{acronymOf(committer)}}</div>
+      </gravatar-image>
+    </div>
+  </template>
+
+  <script>
+    (function () {
+      Polymer({
+        is: 'committer-image',
+        properties: {
+          committer: {
+            type: Object,
+            value: {}
+          }
+        },
+        acronymOf(committer) {
+          if (!committer.email) return
+
+          return committer.email.substr(0, 2).toUpperCase()
+        },
+        backgroundColor(committer) {
+          if (!committer.email) return
+
+          var color = MaterialColors.getByHash(committer.email, '700')
+          return `background-color: ${color}`
+        }
+      });
+    })();
+  </script>
+</dom-module>

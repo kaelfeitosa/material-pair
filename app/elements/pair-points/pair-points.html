@@ -1,0 +1,83 @@
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
+
+<dom-module id="pair-points">
+  <style>
+    :host {
+      display: inline-block;
+    }
+
+    /*:host:hover::shadow {
+      @apply(--shadow-elevation-4dp);
+    }*/
+
+    .pairings-paper {
+      width: inherit;
+      height: inherit;
+    }
+
+    .pairings-label {
+      display: inline-block;
+      cursor: default;
+      font-family: "Roboto";
+      font-weight: 100;
+      font-style: normal;
+      font-size: 48px;
+    }
+
+    .pairings-label-empty {
+      color: var(--paper-grey-300);
+    }
+
+    .pairings-label-info {
+      color: var(--light-primary-color);
+    }
+
+    .pairings-label-warning {
+      color: var(--dark-primary-color);
+    }
+
+    .pairings-label-alert {
+      color: var(--accent-color);
+    }
+  </style>
+
+  <template>
+    <paper-material class="pairings-paper horizontal center-center layout" elevation="0">
+      <div class$="{{color(pairings, limit)}}" id="committer-label">{{pairings}}</div>
+    </paper-material>
+  </template>
+
+  <script>
+    (function () {
+      Polymer({
+        is: 'pair-points',
+        properties: {
+          pairings: {
+            type: Number,
+            value: 0
+          },
+          limit: {
+            type: Number,
+            value: 2
+          }
+        },
+        color(pairings, limit) {
+          const classes = 'pairings-label horizontal center-center layout'
+          return `${classes} ${getPairingLabelAccentClass(pairings, limit)}`
+        }
+      });
+
+      function getPairingLabelAccentClass(pairings, limit) {
+        if(pairings == 0) {
+          return 'pairings-label-empty'
+        } else if(pairings < limit) {
+          return 'pairings-label-info'
+        } else if(pairings == limit) {
+          return 'pairings-label-warning'
+        } else {
+          return 'pairings-label-alert'
+        }
+      }
+    })();
+  </script>
+</dom-module>

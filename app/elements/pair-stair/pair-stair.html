@@ -1,0 +1,92 @@
+<link rel="import" href="../pair-points/pair-points.html">
+<link rel="import" href="../committer-avatar/committer-avatar.html">
+<script src="../../scripts/lib/pairing-computer.js"></script>
+<script src="../../scripts/lib/stair-fitter.js"></script>
+
+<dom-module id="pair-stair">
+  <style>
+    .stair-top {
+      height: 0;
+      width: 96px;
+      display: inline-block;
+    }
+    .stair-rung {
+      height: 96px;
+      width: 96px;
+    }
+  </style>
+
+  <template>
+    <template id="stair-x" is="dom-repeat" items="{{matrix}}" index-as="x" as="pilot">
+      <div class="horizontal center layout">
+        <template id="stair-y" is="dom-repeat" items="{{matrix}}" index-as="y" as="navigator">
+          <template is="dom-if" if="{{isTop(x, y)}}">
+            <span class="stair-top"></span>
+          </template>
+
+          <template is="dom-if" if="{{isPilot(x, y)}}">
+            <committer-avatar class="stair-rung" committer="[[pilot]]">
+            </committer-avatar>
+          </template>
+
+          <template is="dom-if" if="{{isNavigator(x, y)}}">
+            <committer-avatar class="stair-rung" committer="[[navigator]]">
+            </committer-avatar>
+          </template>
+
+          <template is="dom-if" if="{{isPairing(x, y)}}">
+            <pair-points class="stair-rung" pairings="[[getPairing(pilot, navigator)]]">
+            </pair-points>
+          </template>
+        </template>
+      </div>
+    </template>
+  </template>
+
+  <script>
+    (function () {
+      Polymer({
+        is: 'pair-stair',
+        properties: {
+          committers: {
+            type: Array
+          },
+          pairings: {
+            type: Array
+          }
+        },
+        observers: [
+          '_committersChanged(pairings, committers.*)'
+        ],
+        ready() {
+          this.pairingComputer = new PairingComputer();
+          this.stairFitter = new StairFitter();
+        },
+        isPilot(x, y) {
+          return this.stairFitter.isPilot(x, y);
+        },
+        isNavigator(x, y) {
+          return this.stairFitter.isNavigator(x, y);
+        },
+        isPairing(x, y) {
+          return this.stairFitter.isPairing(x, y);
+        },
+        isTop(x, y) {
+          return this.stairFitter.isTop(x, y);
+        },
+        getPairing(pilot, navigator) {
+          return this.pairingComputer.getPoints(pilot, navigator);
+        },
+        _committersChanged() {
+          var actives = function(committer){
+            return committer.active
+          }
+
+          this.pairingComputer = new PairingComputer(this.pairings);
+          this.stairFitter = new StairFitter(this.committers.filter(actives));
+          this.matrix = this.stairFitter.getMatrix();
+        }
+      });
+    })();
+  </script>
+</dom-module>

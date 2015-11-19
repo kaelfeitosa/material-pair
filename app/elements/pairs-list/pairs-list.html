@@ -1,0 +1,77 @@
+<link rel="import" href="../committer-avatar/committer-avatar.html">
+<script src="../../scripts/lib/pairing-computer.js"></script>
+
+<dom-module id="pairs-list">
+  <style>
+    .stair-rung {
+      height: 96px;
+      width: 96px;
+    }
+
+    .points {
+      height: 96px;
+      width: 48px;
+    }
+
+    .card {
+      margin: 16px;
+    }
+
+  </style>
+
+  <template>
+    <div class="horizontal layout wrap center-center">
+      <template is="dom-repeat" items="{{groups}}" as="pairs">
+        <paper-card class="card" heading="{{_head(index)}}">
+          <div class="card-content">
+            <template is="dom-repeat" items="{{pairs}}">
+              <div class="horizontal center layout">
+                <committer-avatar class="stair-rung" committer="[[item.pilot]]">
+                </committer-avatar>
+                <pair-points class="points"  pairings="[[getPairing(item)]]">
+                </pair-points>
+                <committer-avatar class="stair-rung" committer="[[item.navigator]]">
+                </committer-avatar>
+              </div>
+            </template>
+          </div>
+        </paper-card>
+      </template>
+    </div>
+  </template>
+
+  <script>
+    (function () {
+      Polymer({
+        is: 'pairs-list',
+
+        properties: {
+          committers: {
+            type: Array
+          },
+          pairings: {
+            type: Array
+          }
+        },
+
+        observers: [
+          '_committersChanged(committers.*, pairings)'
+        ],
+
+        getPairing(pair) {
+          return this.computer.getPoints(pair.pilot, pair.navigator);
+        },
+        _committersChanged() {
+          var actives = function(committer){
+            return committer.active
+          }
+          this.computer = new PairingComputer(this.pairings);
+          this.groups = this.computer.getBestPairs(this.committers.filter(actives));
+        },
+        _head(i) {
+          return `${i + 1}.`;
+        }
+      });
+    })();
+  </script>
+</dom-module>

@@ -1,0 +1,131 @@
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../bower_components/iron-localstorage/iron-localstorage.html">
+
+<script src="../../scripts/lib/vars.js"></script>
+
+<dom-module id="pairings-service">
+  <template>
+    <iron-ajax id="pairings-ajax" url$="{{urlPairings}}" handle-as="json"
+      params="{{params(since)}}"
+      headers$="{{token}}">
+    </iron-ajax>
+
+    <iron-ajax id="committers-ajax" url$="{{urlCommitters}}" handle-as="json"
+      params="{{params(since)}}"
+      headers$='{{token}}'>
+    </iron-ajax>
+
+    <iron-localstorage id="storage" name="material-pair-14"
+      value="{{committersLocal}}"
+      on-iron-localstorage-load-empty="initializeStorage">
+    </iron-localstorage>
+  </template>
+
+  <script>
+    (function () {
+      Polymer({
+        is: 'pairings-service',
+
+        properties: {
+          since: {
+            type: Date,
+            observer: '_sinceChanged'
+          },
+          committers: {
+            type: Array,
+            notify: true
+          },
+          pairings: {
+            type: Array,
+            notify: true
+          },
+          token: {
+            value: `{"Token": "${Vars.token}"}`
+          },
+          urlCommitters: {
+            value: `${Vars.pairiatorUrl}/committers`
+          },
+          urlPairings: {
+            value: `${Vars.pairiatorUrl}/pairings`
+          },
+          firstTime: {
+            type: Boolean,
+            notify: true,
+            value: false
+          },
+          loaded: {
+            type: Boolean,
+            notify: true,
+            value: false
+          }
+        },
+
+        observers: [
+          '_committersChanged(committers.*)'
+        ],
+
+        params(since) {
+          return {
+            since: `${since.getUTCFullYear()}-${since.getUTCMonth()+1}-${since.getUTCDate()}`
+          }
+        },
+        handlePairingResponse(response) {
+          this.pairings = response._embedded.pairing;
+        },
+        handleCommittersResponse(response) {
+          var committers = response._embedded.committers;
+          this.committersLocalSync(committers);
+        },
+        committersLocalSync(committers) {
+          var find = function(committers, committer) {
+            return committers.filter(function(c) {
+              return c.email == committer.email
+            }).shift()
+          }
+
+          var self = this
+          var updateWith = function(locals) {
+            return function(committer, i) {
+              var local = find(locals, committer)
+              if (local) {
+                Object.assign(local, committer)
+              } else {
+                self.push('committersLocal', committer)
+              }
+            }
+          }
+
+          committers.forEach(updateWith(this.committersLocal));
+          this.set('committers', this.committersLocal)
+        },
+        initializeStorage(event) {
+          this.committersLocal = []
+          this.firstTime = true;
+        },
+        _sinceChanged() {
+          this.set('committers', [])
+          this.set('pairings', [])
+
+          this.loaded = false
+          var self = this
+          Promise.all([
+            this.$['committers-ajax'].generateRequest().completes,
+            this.$['pairings-ajax'].generateRequest().completes
+          ])
+          .then(function(requests) {
+            self.handlePairingResponse(requests[1].response)
+            self.handleCommittersResponse(requests[0].response)
+            self.loaded = true
+            self.fire('loaded');
+          })
+        },
+        _committersChanged(change) {
+          if (change.path.split('.').length < 3) return
+
+          var path = change.path.replace('committers', 'committersLocal')
+          this.set(path, change.value)
+        }
+      });
+    })();
+  </script>
+</dom-module>

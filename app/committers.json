@@ -1,0 +1,30 @@
+{
+  "_embedded": {
+    "committers": [
+      {
+        "email": "aduarte@thoughtworks.com",
+        "name": "Alabê Duarte"
+      },
+      {
+        "email": "bpinheiro@thoughtworks.com",
+        "name": "Bruno Pinheiro"
+      },
+      {
+        "email": "dbarreto@thoughtworks.com",
+        "name": "Daniel Barreto"
+      },
+      {
+        "email": "gcaires@gmail",
+        "name": "Gabriel Caires"
+      },
+      {
+        "email": "mfeitosa@thoughtworks.com",
+        "name": "Michael Feitosa"
+      },
+      {
+        "email": "nbenigno@thoughtworks.com",
+        "name": "Narciso Benigno"
+      }
+    ]
+  }
+}

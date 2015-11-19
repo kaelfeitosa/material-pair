@@ -1,0 +1,43 @@
+<link rel="import" href="../../bower_components/paper-tooltip/paper-tooltip.html">
+<link rel="import" href="../committer-image/committer-image.html">
+
+<dom-module id="committer-avatar">
+  <style>
+    :host {
+      display: inline-block;
+    }
+
+    .committer-paper {
+      width: inherit;
+      height: inherit;
+    }
+
+    .committer-round-tooltip {
+      height: 50px;
+      width: 100px;
+      text-align: center;
+    }
+  </style>
+
+  <template>
+    <div class="committer-paper horizontal center-center layout">
+      <committer-image id="committer-image" class="horizontal center-center layout" committer="{{committer}}"></committer-image>
+      <paper-tooltip class="committer-round-tooltip" for="committer-image">{{committer.name}}</paper-tooltip>
+    </div>
+  </template>
+
+  <script>
+    (function () {
+      Polymer({
+        is: 'committer-avatar',
+        properties: {
+          committer: {
+            type: Object,
+            notify: true,
+            value: {}
+          }
+        }
+      });
+    })();
+  </script>
+</dom-module>

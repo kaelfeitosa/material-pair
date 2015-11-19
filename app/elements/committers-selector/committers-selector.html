@@ -1,0 +1,56 @@
+<link rel="import" href="../../bower_components/paper-tooltip/paper-tooltip.html">
+
+<dom-module id="committers-selector">
+  <style>
+    :host {
+      width: 280px;
+      cursor: pointer;
+      margin: 4px;
+    }
+
+    :host[active]::shadow {
+      background-color: white;
+      @apply(--shadow-elevation-2dp);
+      transition: background-color 0.3s;
+    }
+
+    :host:hover::shadow {
+      @apply(--shadow-elevation-4dp);
+    }
+  </style>
+
+  <template>
+    <div>
+      <paper-icon-item on-tap="handleOnTap">
+        <committer-image item-icon committer="{{committer}}"></committer-image>
+        <paper-item-body class="flex" two-line>
+          <div>{{committer.name}}</div>
+          <div class="secondary" secondary>{{committer.email}}</div>
+        </paper-item-body>
+      </paper-icon-item>
+    </div>
+  </template>
+
+  <script>
+    (function () {
+      Polymer({
+        is: 'committers-selector',
+        properties: {
+          committer: {
+            type: Object,
+            value: {},
+            notify: true
+          },
+          active: {
+            type: Boolean,
+            notify: true,
+            reflectToAttribute: true
+          }
+        },
+        handleOnTap() {
+          this.active = !this.active
+        }
+      });
+    })();
+  </script>
+</dom-module>
